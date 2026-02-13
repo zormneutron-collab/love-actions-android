@@ -1,0 +1,19 @@
+name: Build Android APK
+
+on: [push]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build APK
+        uses: love-actions/love-actions-android@v2
+        with:
+          app-name: "Juice Game"
+          bundle-id: "com.raven.juicegame"
+          # تأكد أن ملف اللعبة في مستودعك اسمه juice.love
+          love-package: "./juice.love" 
+          product-name: "JuiceGame"
+          output-folder: "./build"
