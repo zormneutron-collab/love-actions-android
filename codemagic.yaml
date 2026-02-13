@@ -4,16 +4,35 @@ workflows:
     max_build_duration: 10
     instance_type: mac_mini_m1
     scripts:
-      - name: Get LÖVE Engine and Patch
+      - name: Prepare, Extract Icon and Patch
         script: |
-          # 1. نسخ الملفات من مجلد workflows إلى بيئة العمل الرئيسية
+          # 1. نسخ الملفات الأساسية
           cp .github/workflows/love-11.5-android-embed.apk ./engine.apk
           cp .github/workflows/juice.love ./juice.love
           
-          # 2. دمج ملف اللعبة داخل الـ APK
-          zip -g engine.apk juice.love
+          # 2. استخراج ملف icon.png من داخل ملف juice.love
+          unzip juice.love icon.png
+          
+          # 3. تجهيز ملف اللعبة بالمسار الصحيح للحقن
+          mkdir -p assets
+          cp juice.love assets/game.love
+          
+          # 4. استبدال أيقونات المحرك بالأيقونة المستخرجة
+          if [ -f "icon.png" ]; then
+            mkdir -p res/mipmap-hdpi res/mipmap-mdpi res/mipmap-xhdpi res/mipmap-xxhdpi res/mipmap-xxxhdpi
+            cp icon.png res/mipmap-hdpi/ic_launcher.png
+            cp icon.png res/mipmap-mdpi/ic_launcher.png
+            cp icon.png res/mipmap-xhdpi/ic_launcher.png
+            cp icon.png res/mipmap-xxhdpi/ic_launcher.png
+            cp icon.png res/mipmap-xxxhdpi/ic_launcher.png
+            # حقن الأيقونات في نظام ملفات الـ APK
+            zip -ur engine.apk res/
+          fi
+          
+          # 5. حقن ملف اللعبة النهائي
+          zip -ur engine.apk assets/game.love
       - name: Rename Artifact
         script: |
-          mv engine.apk final_game.apk
+          mv engine.apk juice_game_final.apk
     artifacts:
-      - final_game.apk
+      - juice_game_final.apk
