@@ -1,0 +1,15 @@
+workflows:
+  android-build:
+    name: Build Juice Game APK
+    max_build_duration: 10
+    instance_type: mac_mini_m1
+    scripts:
+      - name: Get LÖVE Engine and Patch
+        script: |
+          curl -L -o engine.apk https://github.com/love2d/love-android/releases/download/11.4/love-11.4-android-universal.apk
+          zip -g engine.apk juice.love
+      - name: Rename Artifact
+        script: |
+          mv engine.apk final_game.apk
+    artifacts:
+      - final_game.apk
