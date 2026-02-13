@@ -6,13 +6,11 @@ workflows:
     scripts:
       - name: Get LÖVE Engine and Patch
         script: |
-          # 1. نسخ محرك LÖVE من المجلد الذي وضعته فيه
+          # 1. نسخ الملفات من مجلد workflows إلى بيئة العمل الرئيسية
           cp .github/workflows/love-11.5-android-embed.apk ./engine.apk
-          
-          # 2. نسخ ملف اللعبة إلى المجلد الرئيسي للعمل
           cp .github/workflows/juice.love ./juice.love
           
-          # 3. دمج ملف اللعبة داخل الـ APK
+          # 2. دمج ملف اللعبة داخل الـ APK
           zip -g engine.apk juice.love
       - name: Rename Artifact
         script: |
